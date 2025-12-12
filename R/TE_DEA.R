@@ -41,6 +41,8 @@ TE_DEA <- function(metafile,
   output.TE<-paste0(output, "/",  "TE_normalizedCounts.csv")
   write.table(TE.count, file=output.TE, sep="\t")
   
+  # Graphs
+  
   
   # This is a procedure not returning anything
   invisible()

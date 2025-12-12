@@ -4,14 +4,14 @@
 \alias{call_deseq2}
 \title{Performs differential analysis expression using DESeq2}
 \usage{
-call_deseq2(countData, metadata, useCtrlGenes = FALSE)
+call_deseq2(countData, metadata, useCtrlGenes)
 }
 \arguments{
 \item{countData}{Data frame with matrix counts obtained from readTEcounts}
 
 \item{metadata}{Metadata read with read_metadata}
 
-\item{useCtrlGenes}{Boolean for using only genes in estimating DESeq2 size factors (default: FALSE)}
+\item{useCtrlGenes}{Boolean for using only genes in estimating DESeq2 size factors}
 }
 \value{
 DESeq2 dds object

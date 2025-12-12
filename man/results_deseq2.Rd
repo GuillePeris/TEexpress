@@ -4,12 +4,12 @@
 \alias{results_deseq2}
 \title{Get results after DESeq2 analysis}
 \usage{
-results_deseq2(dds, shrinklog2FC = FALSE)
+results_deseq2(dds, shrinklog2FC)
 }
 \arguments{
 \item{dds}{Object from call_deseq2 function}
 
-\item{shrinklog2FC}{Boolean for applying log2FC shrinking in DESEq2 (default: FALSE)}
+\item{shrinklog2FC}{Boolean for applying log2FC shrinking in DESEq2}
 }
 \value{
 Data frame with DESeq2 results

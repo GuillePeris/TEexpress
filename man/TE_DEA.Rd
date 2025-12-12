@@ -4,16 +4,24 @@
 \alias{TE_DEA}
 \title{Compute differential expression analysis for transposable elements}
 \usage{
-TE_DEA(metafile, folder, useCtrlGenes = FALSE, shrinklog2FC = FALSE)
+TE_DEA(
+  metafile,
+  folder,
+  output = ".",
+  useCtrlGenes = FALSE,
+  shrinklog2FC = FALSE
+)
 }
 \arguments{
-\item{metafile}{}
+\item{metafile}{Full path of metadata file}
 
-\item{folder}{}
+\item{folder}{Full path for folder of count files}
 
-\item{useCtrlGenes}{}
+\item{output}{Path for output folder}
 
-\item{shrinklog2FC}{}
+\item{useCtrlGenes}{Boolean for using only genes in estimating DESeq2 size factors (default: FALSE)}
+
+\item{shrinklog2FC}{Boolean for applying log2FC shrinking in DESEq2 (default: FALSE)}
 }
 \value{
 Table of results
