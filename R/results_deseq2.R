@@ -1,4 +1,5 @@
 #' @import DESeq2
+#' @importFrom  stats complete.cases
 #' @title Get results after DESeq2 analysis
 #'
 #' @param dds Object from call_deseq2 function
@@ -8,6 +9,10 @@
 #' @export
 #'
 results_deseq2 <- function(dds, shrinklog2FC) {
+  # Setting ghost variables to NULL to pass check() 
+  colData <- NULL
+  
+  expected_levels <- levels(colData(dds)$condition)
   
   # Shrink log2FC if requires
   if(shrinklog2FC) {

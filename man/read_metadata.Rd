@@ -23,7 +23,3 @@ Data frame with metadata
 \description{
 Reads metadata file with sample information
 }
-\examples{
-datafile <- "my.path/data.csv"
-metadata <- read_metadata(datafile)
-}

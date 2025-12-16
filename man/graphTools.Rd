@@ -16,13 +16,22 @@ graphTools(
 )
 }
 \arguments{
-\item{res}{}
+\item{res}{Data frame object with DESeq2 results}
 
-\item{maxpadj}{}
+\item{maxpadj}{P-adjusted value for significant features}
 
-\item{minlfc}{}
+\item{minlfc}{Value for dysregulated features}
 
-\item{plot.title}{}
+\item{device}{Format for graphs ("pdf", "svg", "eps", "png", "tiff", "jpeg").
+A vector for several formats can be uses: c("svg", "png")}
+
+\item{output_folder}{Folder where graphs will be saved}
+
+\item{width}{Graph width in inches}
+
+\item{height}{Graph height in inches}
+
+\item{plot.title}{Text for graph titles}
 }
 \description{
 Functions to plot DESeq2 results

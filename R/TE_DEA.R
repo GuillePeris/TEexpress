@@ -1,4 +1,5 @@
 #' @import stringr
+#' @importFrom utils write.table
 #' @title Compute differential expression analysis for transposable elements 
 #'
 #' @param metafile Full path of metadata file

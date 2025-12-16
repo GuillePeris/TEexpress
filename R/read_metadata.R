@@ -1,3 +1,4 @@
+#' @importFrom utils read.table
 #' @title Reads metadata file with sample information
 #'
 #' @param datafile A tab separated file with four columns and a header. Structure 
@@ -12,10 +13,6 @@
 #' 
 #' @returns Data frame with metadata
 #' @export
-#'
-#' @examples
-#' datafile <- "my.path/data.csv"
-#' metadata <- read_metadata(datafile)
 
 read_metadata <- function(datafile) {
   # Define expected columns

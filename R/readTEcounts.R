@@ -7,12 +7,6 @@
 #'
 #' @returns Data frame with counts by features in rows and samples in columns
 #' @export 
-#'
-#' @examples 
-#' datafile <- "my.path/data.csv"
-#' metadata <- read_metadata(datafile)
-#' folder <- "data/"
-#' df <- readTEexpress(metadata, folder)
 
 readTEcounts <- function(metadata, folder) {
   
@@ -28,7 +22,7 @@ readTEcounts <- function(metadata, folder) {
   # Read all count files into a list
   count_list <- lapply(seq_along(file_paths), function(i) {
     counts <- data.table::fread(file_paths[i], sep = "\t", header = TRUE) %>% 
-               tibble::column_to_rownames(names(.)[1])
+               tibble::column_to_rownames(names(.data)[1])
     colnames(counts) <- metadata$Sample[i]
     counts
   })

@@ -11,6 +11,8 @@
 #' @export
 #'
 call_deseq2 <- function(countData, metadata, useCtrlGenes) {
+  # Setting ghost variables to NULL to pass check() 
+  Condition <- NULL
   
   # Check correct factors in Condition.
   expected_levels <- c("Control", "Treat")

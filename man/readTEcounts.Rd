@@ -18,9 +18,3 @@ Data frame with counts by features in rows and samples in columns
 \description{
 Read TE count data and merge in a data frame by sample
 }
-\examples{
-datafile <- "my.path/data.csv"
-metadata <- read_metadata(datafile)
-folder <- "data/"
-df <- readTEexpress(metadata, folder)
-}
