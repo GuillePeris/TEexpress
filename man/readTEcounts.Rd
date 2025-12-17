@@ -18,3 +18,11 @@ Data frame with counts by features in rows and samples in columns
 \description{
 Read TE count data and merge in a data frame by sample
 }
+\examples{
+\dontrun{
+folder <- "extdata"
+metadata <- read_metadata(datafile)
+countData <- readTEcounts(metadata, folder)
+}
+
+}

@@ -23,3 +23,9 @@ Data frame with metadata
 \description{
 Reads metadata file with sample information
 }
+\examples{
+\dontrun{
+datafile <- "extdata/data.csv"
+metadata <- read_metadata(datafile)
+}
+}

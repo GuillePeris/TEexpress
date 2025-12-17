@@ -5,7 +5,11 @@
 #'
 #' @returns Data frame with normalized counts by samples
 #' @export
-#'
+#' @examples
+#' \dontrun{
+#'   norm.counts <- norm_counts(dds)
+#' }
+#' 
 norm_counts <- function(dds) {
   DESeq2::counts(dds, normalized=TRUE)
 }

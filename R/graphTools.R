@@ -14,7 +14,12 @@
 #' @param output_folder Folder where graphs will be saved
 #' @param width Graph width in inches
 #' @param height Graph height in inches
-#'
+#' @examples
+#' \dontrun{
+#'   graphTools(res, maxpadj, minlfc, device, 
+#'              output, plot.title = plot.title)
+#' }
+#' 
 graphTools <- function(res, maxpadj, minlfc, device = "png", 
                        output_folder = ".", width = 7, height = 7, 
                        plot.title = NULL) {

@@ -36,3 +36,10 @@ A vector for several formats can be uses: c("svg", "png")}
 \description{
 Functions to plot DESeq2 results
 }
+\examples{
+\dontrun{
+  graphTools(res, maxpadj, minlfc, device, 
+             output, plot.title = plot.title)
+}
+
+}

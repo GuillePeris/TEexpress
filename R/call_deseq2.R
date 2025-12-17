@@ -9,7 +9,12 @@
 #'
 #' @returns DESeq2 dds object
 #' @export
-#'
+#' @examples
+#' \dontrun{
+#'   useCtrlGenes <- TRUE
+#'   dds <- call_deseq2(countData, metadata, useCtrlGenes)
+#' }
+#' 
 call_deseq2 <- function(countData, metadata, useCtrlGenes) {
   # Setting ghost variables to NULL to pass check() 
   Condition <- NULL

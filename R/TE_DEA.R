@@ -9,18 +9,23 @@
 #' @param minlfc Value for dysregulated features (default = 1.0)
 #' @param device Format for graphs ("pdf", "svg", "eps", "png", "tiff", "jpeg"). 
 #'               A vector for several formats can be uses: c("svg", "png") (Default: "png)
+#' @param plot.title Text for graph titles (default: "")
 #' @param useCtrlGenes Boolean for using only genes in estimating DESeq2 size factors (default: FALSE)
 #' @param shrinklog2FC Boolean for applying log2FC shrinking in DESEq2 (default: FALSE)
 #'
 #' @returns Table of results
 #' @export
-#'
+#' @examples
+#' \dontrun{
+#' TE_DEA(metafile, folder, output, maxpadj, minlfc, device, plot.title)
+#' }
 TE_DEA <- function(metafile, 
                    folder,
                    output=".",
                    maxpadj = 0.05,
                    minlfc = 1,
                    device = "png",
+                   plot.title = "",
                    useCtrlGenes=FALSE, 
                    shrinklog2FC=FALSE) {
   
@@ -61,10 +66,10 @@ TE_DEA <- function(metafile,
   
   res.genes <- res[!stringr::str_detect(rownames(res), ":"), ]
   graphTools(res.genes, maxpadj, minlfc, device, 
-             output.genes, plot.title = "Prueba") 
+             output.genes, plot.title = plot.title) 
   res.TEs <- res[stringr::str_detect(rownames(res), ":"), ]
   graphTools(res.TEs, maxpadj, minlfc, device, 
-             output.TEs, plot.title = "Prueba") 
+             output.TEs, plot.title = plot.title) 
   
   # This is a procedure not returning anything
   invisible()

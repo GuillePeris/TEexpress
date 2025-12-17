@@ -7,6 +7,13 @@
 #'
 #' @returns Data frame with counts by features in rows and samples in columns
 #' @export 
+#' @examples
+#' \dontrun{
+#' folder <- "extdata"
+#' metadata <- read_metadata(datafile)
+#' countData <- readTEcounts(metadata, folder)
+#' }
+#' 
 
 readTEcounts <- function(metadata, folder) {
   

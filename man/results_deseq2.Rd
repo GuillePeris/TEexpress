@@ -17,3 +17,10 @@ Data frame with DESeq2 results
 \description{
 Get results after DESeq2 analysis
 }
+\examples{
+\dontrun{
+shrinklog2FC <- TRUE
+res <- results_deseq2(dds, shrinklog2FC)
+}
+
+}

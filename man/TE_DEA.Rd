@@ -11,6 +11,7 @@ TE_DEA(
   maxpadj = 0.05,
   minlfc = 1,
   device = "png",
+  plot.title = "",
   useCtrlGenes = FALSE,
   shrinklog2FC = FALSE
 )
@@ -29,6 +30,8 @@ TE_DEA(
 \item{device}{Format for graphs ("pdf", "svg", "eps", "png", "tiff", "jpeg").
 A vector for several formats can be uses: c("svg", "png") (Default: "png)}
 
+\item{plot.title}{Text for graph titles (default: "")}
+
 \item{useCtrlGenes}{Boolean for using only genes in estimating DESeq2 size factors (default: FALSE)}
 
 \item{shrinklog2FC}{Boolean for applying log2FC shrinking in DESEq2 (default: FALSE)}
@@ -38,4 +41,9 @@ Table of results
 }
 \description{
 Compute differential expression analysis for transposable elements
+}
+\examples{
+\dontrun{
+TE_DEA(metafile, folder, output, maxpadj, minlfc, device, plot.title)
+}
 }

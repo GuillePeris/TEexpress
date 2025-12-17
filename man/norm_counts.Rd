@@ -15,3 +15,9 @@ Data frame with normalized counts by samples
 \description{
 Get normalized counts from DESeq2 object
 }
+\examples{
+\dontrun{
+  norm.counts <- norm_counts(dds)
+}
+
+}

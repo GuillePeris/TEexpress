@@ -13,7 +13,11 @@
 #' 
 #' @returns Data frame with metadata
 #' @export
-
+#' @examples 
+#' \dontrun{
+#' datafile <- "extdata/data.csv"
+#' metadata <- read_metadata(datafile)
+#' }
 read_metadata <- function(datafile) {
   # Define expected columns
   expected_cols <- c("File", "Sample", "Group", "Condition")

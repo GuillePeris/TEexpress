@@ -19,3 +19,10 @@ DESeq2 dds object
 \description{
 Performs differential analysis expression using DESeq2
 }
+\examples{
+\dontrun{
+  useCtrlGenes <- TRUE
+  dds <- call_deseq2(countData, metadata, useCtrlGenes)
+}
+
+}

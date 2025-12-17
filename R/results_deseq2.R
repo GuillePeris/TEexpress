@@ -7,7 +7,12 @@
 #'
 #' @returns Data frame with DESeq2 results
 #' @export
-#'
+#' @examples
+#' \dontrun{
+#' shrinklog2FC <- TRUE
+#' res <- results_deseq2(dds, shrinklog2FC)
+#' }
+#' 
 results_deseq2 <- function(dds, shrinklog2FC) {
   # Setting ghost variables to NULL to pass check() 
   colData <- NULL
