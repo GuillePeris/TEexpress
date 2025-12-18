@@ -7,9 +7,10 @@ Tools to analyze transposable elements expression, annotate them in genomic regi
 You can install the development version of TEexpress from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-library(devtools)
-devtools::install_github("GuillePeris/TEexpress")
+# install.packages("remotes")
+remotes::install_github("GuillePeris/TEexpress", 
+                        upgrade = "never",
+                        dependencies = TRUE)
 ```
 
 ## Requirements
@@ -47,4 +48,11 @@ plot.title <- "Test PA1 DGCR8-KO versus WT" # Title for graphs
 TE_DEA(datafile, folder, output, maxpadj, minlfc, device, plot.title)
 ```
 
+## TE annotation to genomic regions
+
+To be done.
+
+## TE classification as self-expressed or gene-dependent
+
+To be done
 
