@@ -74,8 +74,11 @@ volcanoPlot <- function(res, maxpadj, minlfc, plot.title) {
   }
 
   # Compute axis limits
+  res$log10padj <- -log10(res$padj)
+  maxY <- max(res$log10padj[is.finite(res$log10padj)], na.rm = TRUE)
+  res$log10padj[!is.finite(res$log10padj)] <- maxY
   maxX <- max(2, max(abs(res$log2FoldChange), na.rm = TRUE) * 1.05)
-  maxY <- max(5, max(-log10(res$padj))*0.90)
+  maxY <- max(5, maxY*0.90) 
   
   # Assign dysregulated tags
   res$diffExpressed <- case_when(
@@ -92,7 +95,6 @@ volcanoPlot <- function(res, maxpadj, minlfc, plot.title) {
 
   
   # Managing outlier representation
-  res$log10padj <- -log10(res$padj)
   outPointsList <- res$log10padj > maxY * 0.9
   
   outsidePoints <- NULL
