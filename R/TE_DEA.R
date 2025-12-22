@@ -13,11 +13,11 @@
 #' @param useCtrlGenes Boolean for using only genes in estimating DESeq2 size factors (default: FALSE)
 #' @param shrinklog2FC Boolean for applying log2FC shrinking in DESEq2 (default: FALSE)
 #'
-#' @returns Table of results
+#' @returns Table of results for TEs
 #' @export
 #' @examples
 #' \dontrun{
-#' TE_DEA(metafile, folder, output, maxpadj, minlfc, device, plot.title)
+#' res.TEs <- TE_DEA(metafile, folder, output, maxpadj, minlfc, device, plot.title)
 #' }
 TE_DEA <- function(metafile, 
                    folder,
@@ -78,6 +78,5 @@ TE_DEA <- function(metafile,
   graphTools(res.TEs, maxpadj, minlfc, device, 
              output.TEs, plot.title = plot.title) 
   
-  # This is a procedure not returning anything
-  invisible()
+  res.TEs
 }

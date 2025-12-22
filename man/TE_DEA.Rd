@@ -37,13 +37,13 @@ A vector for several formats can be uses: c("svg", "png") (Default: "png)}
 \item{shrinklog2FC}{Boolean for applying log2FC shrinking in DESEq2 (default: FALSE)}
 }
 \value{
-Table of results
+Table of results for TEs
 }
 \description{
 Compute differential expression analysis for transposable elements
 }
 \examples{
 \dontrun{
-TE_DEA(metafile, folder, output, maxpadj, minlfc, device, plot.title)
+res.TEs <- TE_DEA(metafile, folder, output, maxpadj, minlfc, device, plot.title)
 }
 }

@@ -45,7 +45,7 @@ minlfc <- 1         # Value for dysregulated features (default = 1.0)
 device <- c("png", "svg") # Format for graphs
 plot.title <- "Test PA1 DGCR8-KO versus WT" # Title for graphs
 
-TE_DEA(datafile, folder, output, maxpadj, minlfc, device, plot.title)
+res.TEs <- TE_DEA(datafile, folder, output, maxpadj, minlfc, device, plot.title)
 ```
 
 ## TE annotation to genomic regions
