@@ -1,6 +1,5 @@
 #' @import stringr
 #' @import DESeq2
-#' @import dplyr
 #' @title Performs differential analysis expression using DESeq2
 #'
 #' @param countData Data frame with matrix counts obtained from readTEcounts

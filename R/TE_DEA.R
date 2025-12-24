@@ -47,9 +47,9 @@ TE_DEA <- function(metafile,
   norm.counts <- norm_counts(dds)
 
   # Create separate folders for genes and TEs
-  output.genes <- paste0(output, "/genes")
+  output.genes <- paste0(output, "/genes_DEA")
   dir.create(output.genes, showWarnings = FALSE, recursive = TRUE)
-  output.TEs <- paste0(output, "/TEs")
+  output.TEs <- paste0(output, "/TEs_DEA")
   dir.create(output.TEs, showWarnings = FALSE, recursive = TRUE)
     
   # Divide counts in genes and TEs and save

@@ -1,5 +1,5 @@
 #' @import ggplot2
-#' @import dplyr
+# @import dplyr
 #' @import tibble
 #' @importFrom grDevices cairo_ps
 #' @importFrom utils globalVariables
@@ -81,7 +81,7 @@ volcanoPlot <- function(res, maxpadj, minlfc, plot.title) {
   maxY <- max(5, maxY*0.90) 
   
   # Assign dysregulated tags
-  res$diffExpressed <- case_when(
+  res$diffExpressed <- dplyr::case_when(
     res$log2FoldChange > minlfc & res$padj < maxpadj ~ "UP",
     res$log2FoldChange < -minlfc & res$padj < maxpadj ~ "DOWN",
     TRUE ~ "NS"
@@ -182,7 +182,7 @@ MAPlot <- function(res, maxpadj, minlfc, plot.title) {
   maxY <- max(2, max(abs(res$log2FoldChange), na.rm = TRUE) * 0.8)
 
   # Assign dysregulated tags
-  res$diffExpressed <- case_when(
+  res$diffExpressed <- dplyr::case_when(
     res$log2FoldChange > minlfc & res$padj < maxpadj ~ "UP",
     res$log2FoldChange < -minlfc & res$padj < maxpadj ~ "DOWN",
     TRUE ~ "NS"
