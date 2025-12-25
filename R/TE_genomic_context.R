@@ -11,10 +11,17 @@ TE_genomic_context <- function(res.TEs, gtf.genes,
                                downstream=10000) {
   # Setting ghost variables to NULL to pass check() 
   annotation <- NULL
-  
+
+  # Prepare gene names table.
+  gene_names <- as.data.frame(gtf.genes) %>% 
+    dplyr::filter(type == "gene", gene_biotype == "protein_coding") %>% 
+    dplyr::select(gene_id, gene_name) # %>% 
+    #dplyr::mutate(gene_name = dplyr::coalesce(gene_name, gene_id))
+    
   # Keep only canonical protein-coding genes
   gtf.genes <- gtf.genes[!is.na(gtf.genes$transcript_biotype) &
                              gtf.genes$transcript_biotype == "protein_coding", ]
+
   
   # Chipseeker options.
   options(ChIPseeker.downstreamDistance = downstream)
@@ -69,6 +76,12 @@ TE_genomic_context <- function(res.TEs, gtf.genes,
   # Modify geneStrand notation
   res.TEs[!is.na(res.TEs$geneStrand) & res.TEs$geneStrand == '1', ]$geneStrand <-  '+'
   res.TEs[!is.na(res.TEs$geneStrand) & res.TEs$geneStrand == '2', ]$geneStrand <-  '-' 
+  
+  # Add gene name when available
+  res.rownames <- rownames(res.TEs)
+  res.TEs <- dplyr::left_join(res.TEs, gene_names,
+                              by=dplyr::join_by(geneId == gene_id))
+  rownames(res.TEs) <- res.rownames
   
   res.TEs
 }
