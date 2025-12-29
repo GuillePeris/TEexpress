@@ -10,7 +10,7 @@ TE_genomic_context <- function(res.TEs, gtf.genes,
                                TSSminus=-5000, TSSplus=5000,
                                downstream=10000) {
   # Setting ghost variables to NULL to pass check() 
-  annotation <- NULL
+  annotation <- type <- gene_biotype <- gene_id <- geneId <- gene_name <-  NULL
 
   # Prepare gene names table.
   gene_names <- as.data.frame(gtf.genes) %>% 
