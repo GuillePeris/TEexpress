@@ -9,6 +9,7 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports: 
+    BiocGenerics,
     ChIPseeker,
     data.table,
     DESeq2,
@@ -16,12 +17,18 @@ Imports:
     GenomeInfoDb,
     GenomicFeatures,
     GenomicRanges,
+    ggfittext,
     ggplot2,
+    magrittr,
+    methods,
+    rlang,
     rtracklayer,
+    scales,
     stringr,
     SummarizedExperiment,
     tibble
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    apeglm
 VignetteBuilder: knitr

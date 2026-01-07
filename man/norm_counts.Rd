@@ -2,22 +2,41 @@
 % Please edit documentation in R/norm_counts.R
 \name{norm_counts}
 \alias{norm_counts}
-\title{Get normalized counts from DESeq2 object}
+\title{Get Normalized Counts from DESeq2 Object}
 \usage{
 norm_counts(dds)
 }
 \arguments{
-\item{dds}{DEseq2 object}
+\item{dds}{A DESeqDataSet object as returned by \code{\link{call_deseq2}}.
+Size factors must have been calculated (automatically done by
+\code{DESeq2::DESeq()}).}
 }
 \value{
-Data frame with normalized counts by samples
+A numeric matrix with normalized counts. Features in rows, samples
+in columns. Row and column names are preserved from the DESeqDataSet.
 }
 \description{
-Get normalized counts from DESeq2 object
+Extracts normalized count data from a DESeqDataSet object. Counts are
+normalized by size factors to account for differences in sequencing depth
+between samples.
+}
+\details{
+This is a convenience wrapper around \code{DESeq2::counts(dds, normalized = TRUE)}.
+
+Normalized counts are calculated by dividing raw counts by size factors.
+These counts are appropriate for visualization and clustering, but should
+NOT be used as input for differential expression analysis (use raw counts
+for that).
 }
 \examples{
 \dontrun{
-  norm.counts <- norm_counts(dds)
-}
+# Run DESeq2 analysis
+dds <- call_deseq2(countData, metadata)
 
+# Extract normalized counts
+norm_counts_matrix <- norm_counts(dds)
+
+# Convert to data frame if needed
+norm_counts_df <- as.data.frame(norm_counts_matrix)
+}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/TE_DEA.R
 \name{TE_DEA}
 \alias{TE_DEA}
-\title{Compute differential expression analysis for transposable elements}
+\title{Perform Differential Expression Analysis for Transposable Elements}
 \usage{
 TE_DEA(
   metafile,
@@ -10,40 +10,138 @@ TE_DEA(
   output = ".",
   maxpadj = 0.05,
   minlfc = 1,
+  gtf.TE.file,
   device = "png",
   plot.title = "",
   useCtrlGenes = FALSE,
-  shrinklog2FC = FALSE
+  shrinklog2FC = FALSE,
+  saveNorm = TRUE
 )
 }
 \arguments{
-\item{metafile}{Full path of metadata file}
+\item{metafile}{Character string. Full path to the metadata file. Should be
+a tab-separated file readable by \code{\link{read_metadata}}.}
 
-\item{folder}{Full path for folder of count files}
+\item{folder}{Character string. Full path to the directory containing count
+files listed in the metadata.}
 
-\item{output}{Path for output folder (default = ".")}
+\item{output}{Character string. Path for output directory. Will be created
+if it doesn't exist. Default is current directory (".").}
 
-\item{maxpadj}{P-adjusted value for significant features (default = 0.05)}
+\item{maxpadj}{Numeric. Adjusted p-value threshold for significance.
+Features with padj < maxpadj are considered significant. Default is 0.05.}
 
-\item{minlfc}{Value for dysregulated features (default = 1.0)}
+\item{minlfc}{Numeric. Minimum absolute log2 fold change threshold for
+differential expression. Default is 1.}
 
-\item{device}{Format for graphs ("pdf", "svg", "eps", "png", "tiff", "jpeg").
-A vector for several formats can be uses: c("svg", "png") (Default: "png)}
+\item{gtf.TE.file}{Character string. Full path to GTF file containing TE
+annotations. Must be the same GTF file used for upstream TE counting
+with TElocal from TEtranscript package.}
 
-\item{plot.title}{Text for graph titles (default: "")}
+\item{device}{Character vector. File format(s) for output plots. Supported:
+"svg", "eps", "png", "tiff", "jpeg". Can specify multiple formats
+as a vector (e.g., \code{c("jpeg", "png")}). Default is "png".}
 
-\item{useCtrlGenes}{Boolean for using only genes in estimating DESeq2 size factors (default: FALSE)}
+\item{plot.title}{Character string. Title for volcano and MA plots. If empty
+string (default), generic titles will be used.}
 
-\item{shrinklog2FC}{Boolean for applying log2FC shrinking in DESEq2 (default: FALSE)}
+\item{useCtrlGenes}{Logical. If TRUE, uses only genes (not TEs) for
+estimating DESeq2 size factors. This can improve normalization when TEs
+have very different expression patterns than genes. Default is FALSE.}
+
+\item{shrinklog2FC}{Logical. If TRUE, applies apeglm log2 fold change
+shrinkage in DESeq2 for more accurate effect size estimates. Recommended
+for ranking and visualization. Default is FALSE.}
+
+\item{saveNorm}{Logical. If TRUE, saves normalized count matrices for both
+genes and TEs. If FALSE, only saves DESeq2 results. Default is TRUE.}
 }
 \value{
-Table of results for TEs
+A list with three elements:
+\describe{
+\item{res.TEs}{Data frame of DESeq2 results for TEs, including genomic
+coordinates and TE annotations}
+\item{TE.count}{Data frame of normalized counts for TEs across samples}
+\item{metadata}{Original metadata data frame used for the analysis}
+}
 }
 \description{
-Compute differential expression analysis for transposable elements
+Main pipeline function for analyzing differential expression of transposable
+elements (TEs) and genes using DESeq2. Reads count data, performs statistical
+analysis, and generates visualization plots.
 }
+\details{
+The pipeline performs the following steps:
+\enumerate{
+\item Reads sample metadata and count files
+\item Imports TE annotations from GTF file
+\item Adds genomic coordinates to TE features
+\item Filters non-standard chromosomes
+\item Performs DESeq2 differential expression analysis
+\item Extracts normalized counts
+\item Separates results for genes vs. TEs
+\item Saves results to separate directories
+\item Generates volcano and MA plots for both genes and TEs
+}
+
+The function distinguishes TEs from genes by the presence of a colon (:) in
+the feature name, which is the standard format for TE loci identifiers
+(e.g., "L1Md_A:chr1:12345-12678:+").
+}
+\section{Output Structure}{
+
+The function creates the following directory structure:
+\preformatted{
+output/
+  ├── genes_DEA/
+  │   ├── DESeq2_gene_results.tsv
+  │   ├── gene_normalizedCounts.tsv (if saveNorm = TRUE)
+  │   ├── volcanoPlot.<format>
+  │   └── maPlot.<format>
+  └── TEs_DEA/
+      ├── DESeq2_TE_results.tsv
+      ├── TE_normalizedCounts.tsv (if saveNorm = TRUE)
+      ├── volcanoPlot.<format>
+      └── maPlot.<format>
+}
+
+TE results include additional columns for genomic coordinates (seqnames,
+start, end, strand, width) and TE class/family information.
+}
+
 \examples{
 \dontrun{
-res.TEs <- TE_DEA(metafile, folder, output, maxpadj, minlfc, device, plot.title)
+# Basic usage with default parameters
+results <- TE_DEA(
+  metafile = "metadata.txt",
+  folder = "counts",
+  gtf.TE.file = "TEs.gtf"
+)
+
+# Full analysis with custom parameters
+results <- TE_DEA(
+  metafile = "samples.txt",
+  folder = "count_data",
+  output = "results/DE_analysis",
+  maxpadj = 0.01,
+  minlfc = 1.5,
+  gtf.TE.file = "annotations/TE_annotation.gtf",
+  device = c("tiff", "png"),
+  plot.title = "KO vs WT",
+  useCtrlGenes = TRUE,
+  shrinklog2FC = TRUE,
+  saveNorm = TRUE
+)
+
+# Access TE results
+head(results$res.TEs)
+dim(results$TE.count)
+
+# Find significantly upregulated TEs
+sig_up_TEs <- results$res.TEs[
+  results$res.TEs$padj < 0.05 &
+  results$res.TEs$log2FoldChange > 1,
+]
 }
+
 }

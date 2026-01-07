@@ -2,27 +2,58 @@
 % Please edit documentation in R/call_deseq2.R
 \name{call_deseq2}
 \alias{call_deseq2}
-\title{Performs differential analysis expression using DESeq2}
+\title{Perform Differential Expression Analysis Using DESeq2}
 \usage{
 call_deseq2(countData, metadata, useCtrlGenes)
 }
 \arguments{
-\item{countData}{Data frame with matrix counts obtained from readTEcounts}
+\item{countData}{Data frame with count matrix as returned by
+\code{\link{readTEcounts}}. Features in rows, samples in columns.
+Row names identify features; TE features are expected to contain ":"
+in their names.}
 
-\item{metadata}{Metadata read with read_metadata}
+\item{metadata}{Data frame with sample metadata as returned by
+\code{\link{read_metadata}}. Must contain columns: File, Sample, Group,
+and Condition. Sample names must match column names in countData.}
 
-\item{useCtrlGenes}{Boolean for using only genes in estimating DESeq2 size factors}
+\item{useCtrlGenes}{Logical. If TRUE, only gene features (those without ":"
+in their names) are used to estimate size factors. If FALSE, all features
+are used. Default is FALSE.}
 }
 \value{
-DESeq2 dds object
+A DESeqDataSet object after running the DESeq2 analysis pipeline.
 }
 \description{
-Performs differential analysis expression using DESeq2
+Performs differential expression analysis on count data using DESeq2.
+Optionally uses only gene features (non-TE) for size factor estimation.
+}
+\details{
+The function creates a DESeqDataSet with a design formula \code{~ condition},
+where condition is derived from the Condition column in metadata (Control vs Treat).
+
+When \code{useCtrlGenes = TRUE}, size factors are estimated using only
+gene features (rownames without ":"), which can be more appropriate when
+analyzing datasets containing both genes and transposable elements. This
+approach assumes that TEs may have more variable expression and could bias
+normalization.
+
+The function assumes TE features contain ":" in their rownames (e.g.,
+"transcript_id:TE_name:TE_family:TE_class").
 }
 \examples{
 \dontrun{
-  useCtrlGenes <- TRUE
-  dds <- call_deseq2(countData, metadata, useCtrlGenes)
+# Read data
+metadata <- read_metadata("metadata.txt")
+countData <- readTEcounts(metadata, "counts")
+
+# Run DESeq2 using all features for normalization
+dds <- call_deseq2(countData, metadata, useCtrlGenes = FALSE)
+
+# Run DESeq2 using only genes for normalization
+dds_ctrl <- call_deseq2(countData, metadata, useCtrlGenes = TRUE)
+
+# Extract results
+res <- results_deseq2(dds)
 }
 
 }

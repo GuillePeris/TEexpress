@@ -2,25 +2,50 @@
 % Please edit documentation in R/results_deseq2.R
 \name{results_deseq2}
 \alias{results_deseq2}
-\title{Get results after DESeq2 analysis}
+\title{Get Results After DESeq2 Analysis}
 \usage{
 results_deseq2(dds, shrinklog2FC)
 }
 \arguments{
-\item{dds}{Object from call_deseq2 function}
+\item{dds}{A DESeqDataSet object as returned by \code{\link{call_deseq2}} or
+\code{DESeq2::DESeq()}. Must have completed the DESeq2 analysis pipeline.}
 
-\item{shrinklog2FC}{Boolean for applying log2FC shrinking in DESEq2}
+\item{shrinklog2FC}{Logical. If TRUE, applies log2 fold change shrinkage using
+the apeglm method to produce more accurate effect size estimates. If FALSE,
+returns standard DESeq2 results. Default is FALSE. Note: Shrinkage requires
+the \code{apeglm} package to be installed.}
 }
 \value{
-Data frame with DESeq2 results
+A data frame with DESeq2 results with rows sorted by adjusted p-value
+(most significant first). Row names correspond to feature names from the count data.
 }
 \description{
-Get results after DESeq2 analysis
+Extracts differential expression results from a DESeqDataSet object,
+with optional log2 fold change shrinkage for improved effect size estimates.
+}
+\details{
+This function extracts differential expression results comparing the "Treat"
+condition against the "Control" condition (reference level).
+
+When \code{shrinklog2FC = TRUE}, log2 fold changes are shrunk using the
+apeglm method (\code{DESeq2::lfcShrink})
+
+Rows with NA values (typically low-count genes filtered by DESeq2's
+independent filtering) are removed, and results are sorted by adjusted p-value.
 }
 \examples{
 \dontrun{
-shrinklog2FC <- TRUE
-res <- results_deseq2(dds, shrinklog2FC)
+# Run DESeq2 analysis
+dds <- call_deseq2(countData, metadata, useCtrlGenes = FALSE)
+
+# Get results without shrinkage
+res <- results_deseq2(dds, shrinklog2FC = FALSE)
+
+# Get results with log2FC shrinkage (requires apeglm package)
+res_shrink <- results_deseq2(dds, shrinklog2FC = TRUE)
+
+# View top results
+head(res)
 }
 
 }

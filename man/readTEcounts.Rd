@@ -2,27 +2,58 @@
 % Please edit documentation in R/readTEcounts.R
 \name{readTEcounts}
 \alias{readTEcounts}
-\title{Read TE count data and merge in a data frame by sample}
+\title{Read and Merge TE Count Data by Sample}
 \usage{
 readTEcounts(metadata, folder)
 }
 \arguments{
-\item{metadata}{Data frame with sample information, previously read with
-function read_metadata.}
+\item{metadata}{Data frame with sample metadata, as returned by
+\code{\link{read_metadata}}. Must contain columns: File, Sample, Group,
+and Condition.}
 
-\item{folder}{Folder for count files listed in first column}
+\item{folder}{Character string. Path to the directory containing the count
+files listed in the first column of \code{metadata}. Can be absolute or
+relative path.}
 }
 \value{
-Data frame with counts by features in rows and samples in columns
+A data frame with features as row names and samples as columns.
+Column names correspond to the Sample column in \code{metadata}.
+Column order matches the row order in \code{metadata}.
 }
 \description{
-Read TE count data and merge in a data frame by sample
+Reads transposable element (TE) count files for multiple samples and merges
+them into a single count matrix. Count files from TElocal (TEtranscripts)
+should be tab-separated with two columns: feature names and counts.
+}
+\details{
+Each count file must:
+\itemize{
+\item Be tab-separated
+\item Have a header row
+\item Contain exactly 2 columns: feature name and count value
+\item Use the same feature names across all samples (order can vary)
+}
+
+The function attempts to efficiently merge count data:
+\itemize{
+\item If all files have identical features in the same order, uses fast
+column binding
+\item If feature order differs, performs full outer join to align features
+\item Missing features in some samples are filled with NA (should not occur
+in well-formatted data)
+}
 }
 \examples{
 \dontrun{
-folder <- "extdata"
-metadata <- read_metadata(datafile)
-countData <- readTEcounts(metadata, folder)
+# Read metadata
+metadata <- read_metadata("metadata.txt")
+
+# Read count files from directory
+countData <- readTEcounts(metadata, folder = "counts")
+
+# Verify dimensions
+dim(countData)
+head(countData)
 }
 
 }
