@@ -39,7 +39,8 @@ purpose we have **TE_DEA** function.
 library(TEexpress)
 
 # Get test files
-my.data <- downloadTestData()
+data_folder = NULL   # Change to your local download folder. NULL uses temp dir.
+my.data <- downloadTestData(data_folder)
 folder <- my.data$folder
 metafile <- my.data$metafile
 output <- "results"
