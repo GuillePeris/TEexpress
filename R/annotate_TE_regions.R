@@ -175,6 +175,11 @@ annotate_TE_regions <- function(TE_results,
     )
   }
   
+  # Filter to protein-coding genes
+  is_protein_coding_gene <- !is.na(gtf.genes$gene_biotype) &
+    gtf.genes$gene_biotype == "protein_coding"
+  gtf.genes <- gtf.genes[is_protein_coding_gene]
+  
   # Filter to protein-coding transcripts
   is_protein_coding <- !is.na(gtf.genes$transcript_biotype) &
     gtf.genes$transcript_biotype == "protein_coding"
@@ -188,10 +193,10 @@ annotate_TE_regions <- function(TE_results,
     )
   }
   
-  gtf.genes <- gtf.genes[is_protein_coding]
+  transcript.gr <- gtf.genes[is_protein_coding]   
   
   # Extract transcript features
-  is_transcript <- gtf.genes$type == "transcript"
+  is_transcript <- transcript.gr$type == "transcript"
   
   if (!any(is_transcript)) {
     stop(
@@ -201,7 +206,7 @@ annotate_TE_regions <- function(TE_results,
     )
   }
   
-  transcript.gr <- gtf.genes[is_transcript]  
+  transcript.gr <- transcript.gr[is_transcript]  
   
   end.time <- Sys.time()
   duration <- difftime(end.time, start.time, units = "secs")
@@ -215,7 +220,7 @@ annotate_TE_regions <- function(TE_results,
   start.time <- Sys.time()
   
   gene.TxDb <- tryCatch(
-    suppressWarnings(GenomicFeatures::makeTxDbFromGRanges(gtf.genes)),
+    suppressWarnings(GenomicFeatures::makeTxDbFromGRanges(gtf.genes)),   
     error = function(e) {
       stop(
         "Failed to create TxDb from GTF: ", e$message,
@@ -262,11 +267,11 @@ annotate_TE_regions <- function(TE_results,
         )
       }
     )
-    
+  }
     end.time <- Sys.time()
     duration <- difftime(end.time, start.time, units = "secs")
     message("       -> Finished preparing gene names (", round(duration[[1]], 2), " seconds)")
-  }
+  
   
   
   # ============================================================

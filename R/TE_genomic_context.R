@@ -205,9 +205,11 @@ TE_genomic_context <- function(df.TEs,
   anno_mcols <- GenomicRanges::mcols(anno@anno)
   df.TEs <- cbind(df.TEs, anno_mcols)
   rownames(df.TEs) <- original_rownames
+  df.TEs$distanceToTSS <- NULL
   
   # Simplify annotation labels
   df.TEs <- .simplify_annotations(df.TEs)
+
   
   # ============================================================
   # Assign Nearest Gene to Intergenic TEs
@@ -242,7 +244,7 @@ TE_genomic_context <- function(df.TEs,
   # Assign gene information to intergenic TEs
   my.columns <- c(
     "geneChr", "geneStart", "geneEnd",
-    "geneLength", "geneStrand", "geneId"
+    "geneLength", "geneStrand", "geneId", "transcriptId"
   )
   
   intergenic_rows <- which(df.TEs$annotation == "Intergenic")
@@ -255,7 +257,8 @@ TE_genomic_context <- function(df.TEs,
       geneEnd = BiocGenerics::end(query),
       geneLength = BiocGenerics::end(query) - BiocGenerics::start(query),
       geneStrand = as.character(BiocGenerics::strand(query)),
-      geneId = GenomicRanges::mcols(query)$gene_id
+      geneId = GenomicRanges::mcols(query)$gene_id,
+      transcriptID = GenomicRanges::mcols(query)$transcript_id
     )
   }
   
