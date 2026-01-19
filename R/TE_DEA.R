@@ -179,7 +179,6 @@ TE_DEA <- function(metafile,
       stop("Failed to read count files: ", e$message, call. = FALSE)
     }
   )  
-  end.time <- Sys.time()
   
   if (ncol(countData) != nrow(metadata)) {
     stop(
@@ -188,6 +187,8 @@ TE_DEA <- function(metafile,
       call. = FALSE
     )
   }
+  
+  end.time <- Sys.time()
   
   duration <- difftime(end.time, start.time, units="secs")
   message("       -> Finished reading metadata and count files (", 
