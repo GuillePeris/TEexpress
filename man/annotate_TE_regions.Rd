@@ -20,6 +20,7 @@ annotate_TE_regions(
 \describe{
 \item{res.TEs}{Data frame of DESeq2 results for TEs}
 \item{TE.count}{Data frame of normalized counts for TEs}
+\item{gene.count}{Data frame of normalized counts for genes}
 \item{metadata}{Sample metadata data frame}
 }}
 
@@ -52,8 +53,9 @@ A list with three updated elements for downstream analysis:
 \describe{
 \item{res.TEs}{Data frame of DESeq2 results with added genomic annotation
 columns (annotation, geneChr, geneStart, geneEnd, geneId, gene_name, etc.)}
-\item{TE.count}{Data frame of normalized counts with added genomic annotation
+\item{TE.count}{Data frame of normalized TE counts with added genomic annotation
 columns}
+\item{gene.count}{Data frame of normalized gene counts}
 \item{metadata}{Original sample metadata (unchanged)}
 }
 }
