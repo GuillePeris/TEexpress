@@ -490,7 +490,7 @@ TE_DEA <- function(metafile,
   TE_results <- list(
     res.TEs = res.TEs,
     TE.count = TE.count,
-    gene.count = gene.count,
+    gene.count = as.data.frame(gene.count),
     metadata = metadata
   ) 
   

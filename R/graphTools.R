@@ -54,12 +54,14 @@ printDevice <- function(plot, basename, device, width = 7, height = 7) {
         if (fmt == "png") {
           suppressWarnings(ggplot2::ggsave(
             outfile, plot,
+            bg = 'white',
             width = width, height = height,
             dpi = 300, device = "png"
           ))
         } else if (fmt == "eps") {
           suppressWarnings(ggplot2::ggsave(
             outfile, plot,
+            bg = 'white',
             width = width, height = height,
             device = grDevices::cairo_ps,
             fallback_resolution = 300
@@ -67,6 +69,7 @@ printDevice <- function(plot, basename, device, width = 7, height = 7) {
         } else {
           suppressWarnings(ggplot2::ggsave(
             outfile, plot,
+            bg = 'white', 
             width = width, height = height,
             device = fmt
           ))
