@@ -254,18 +254,21 @@ TE_results <- TE_regionAnnot(
 
 ---
 
-### Step 3: Transcriptional Classification *(Coming Soon)*
+### Step 3: Transcriptional Classification
 
 Classify TEs as:
 
 - **Self-expressed**: Transcribed from their own internal promoter
 - **Gene-dependent**: Transcribed as part of host gene transcription (runthrough)
+
+Use **save** variable to analyze "all" expressed TEs, "up"-regulated, "down"-regulated
+or "dys"-regulated (up+down).
+
 ```r
-# Feature in development
-TE_results <- classify_TE_transcription(
-  TE_results = TE_results,
-  # Additional parameters TBD
-)
+TE_results_dys <- classify_TE_transcription(TE_results, 
+                                            output_folder = output, 
+                                            plot.title = plot.title,
+                                            save = "dys")
 ```
 
 ---
