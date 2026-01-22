@@ -1,10 +1,12 @@
-#' Create Pie Charts for TE Expression Classification
+#' Create Classification Plots for TE Expression
 #'
-#' Generates different types of charts showing the proportion of self-expressed 
+#' Generates multiple types of plots showing the proportion of self-expressed
 #' vs. gene-dependent transposable elements across different TE classes (LINE,
 #' SINE, LTR, DNA, etc.).
 #'
-#' @param res Data frame containing TE classification results. 
+#' @param res Data frame containing TE classification results. Must include
+#'   columns: \code{TE_expression} (classification: "dependent" or "self"),
+#'   and \code{expression_type} (detailed classification for stacked bar plots).
 #' @param plot.title Character string. Title for the plot. If NULL (default),
 #'   no title is displayed.
 #' @param device Character vector. File format(s) for output plots. Supported:
@@ -31,15 +33,23 @@
 #'     \item "down": Only significantly downregulated TEs
 #'   }
 #'
-#' @details
-#' The function creates a pie chart for each TE class showing:
+#' The function creates two types of plots:
+#'
+#' \strong{1. Pie Charts:}
+#' One pie chart per TE class showing the overall proportion of:
 #' \itemize{
-#'   \item **Self-expressed TEs**: TEs transcribed from their own promoter
-#'   \item **Gene-dependent TEs**: TEs transcribed as part of gene runthrough
+#'   \item \strong{Self-expressed TEs}: Transcribed from their own promoter
+#'   \item \strong{Gene-dependent TEs}: Transcribed as part of gene runthrough
 #' }
 #'
-#' Each pie slice is labeled with its percentage. TE classes are displayed
-#' as separate facets, arranged horizontally (up to \code{max_cols} columns).
+#' \strong{2. Stacked Bar Charts:}
+#' Grouped bars showing detailed classification breakdown:
+#' \itemize{
+#'   \item Exon, Intron (expressed), Intron (not expressed), etc.
+#'   \item Grouped by self-expressed vs. gene-dependent
+#'   \item One panel per TE class
+#' }
+#'
 #'
 #' @return Invisible NULL. Called for side effects (creating plot files).
 #'
@@ -109,16 +119,32 @@ TE_classify_pie <- function(res,
     )
   }
   
+  # Check required elements
+  required_columns <- c("expression_type", "TE_expression", 
+                        "TE_name", "TE_family", "TE_class")
+  missing_columns <- setdiff(required_columns, colnames(res))
   
-  # Create pie plots
+  if (length(missing_columns) > 0L) {
+    stop(
+      "'res' must contain columns: ",
+      paste(required_columns, collapse = ", "),
+      "\nMissing: ", paste(missing_columns, collapse = ", "),
+      call. = FALSE
+    )
+  }
+  
+  # ============================================================
+  # Create and Save Pie Charts
+  # ============================================================  
+  
   filename <- file.path(output_folder, paste0("pie_TE_classes_", save))
   
   p <- tryCatch(
-    create_pie_plot(res = res, 
-                      plot.title = plot.title,
-                      colors = colors,
-                      labels = labels
-                      ),
+    .create_pie_plot(res = res, 
+                    plot.title = plot.title,
+                    colors = colors,
+                    labels = labels
+    ),
     error = function(e) {
       stop(
         "Failed to create pie TE classify plot: ", e$message,
@@ -139,11 +165,14 @@ TE_classify_pie <- function(res,
     }
   )
   
-  # Create stack bar plots
+  # ============================================================
+  # Create and Save Stacked Bar Charts
+  # ============================================================
+  
   filename <- file.path(output_folder, paste0("stack_bar_TE_classes_", save))
   
   p <- tryCatch(
-    create_grouped_stack_bar(res = res, 
+    .create_grouped_stack_bar(res = res, 
                               plot.title = plot.title
                              ),
     error = function(e) {
@@ -182,7 +211,7 @@ TE_classify_pie <- function(res,
 #' @keywords internal
 #' @noRd
 #'
-create_pie_plot <- function(res,
+.create_pie_plot <- function(res,
                              plot.title = NULL,
                              colors = c("dependent" = "#FF1F5B", "self" = "#009ADE"),
                              labels = c("dependent" = "Gene-dependent TEs",
@@ -198,9 +227,19 @@ create_pie_plot <- function(res,
       prop = .data$n / sum(.data$n) * 100
     )
   
-  res_summary$TE_expression <- factor(res_summary$TE_expression)
-  nTE_class <- length(unique(res$TE_class))
+  if (nrow(res_summary) == 0L) {
+    stop("No data remaining after summarization.", call. = FALSE)
+  }
   
+  # Ensure factor for consistent ordering
+  res_summary$TE_expression <- factor(
+    res_summary$TE_expression,
+    levels = c("dependent", "self")
+  )
+  
+  nTE_class <- length(unique(res_summary$TE_class))
+  
+  # Create pie charts
   p <- ggplot2::ggplot(
     res_summary,
     ggplot2::aes(x = "", y = .data$prop, fill = .data$TE_expression)
@@ -233,15 +272,27 @@ create_pie_plot <- function(res,
   p
 }
 
-
-create_grouped_stack_bar <- function(res,
-                             plot.title = NULL) {
+#' Create Grouped Stacked Bar Chart for TE Classification
+#'
+#' Internal function to generate stacked bar charts showing detailed
+#' classification breakdown (Exon, Intron expressed/not expressed, etc.)
+#' grouped by self-expressed vs. gene-dependent.
+#'
+#' @param res Data frame with TE_expression, expression_type, and TE_class columns
+#' @param plot.title Character string for plot title
+#'
+#' @return A ggplot object
+#' @keywords internal
+#' @noRd
+.create_grouped_stack_bar <- function(res,
+                                      plot.title = NULL) {
  
   # Calculate proportions by TE class
   res_summary <- res %>%
     dplyr::count(.data$TE_expression, 
                  .data$expression_type, 
-                 .data$TE_class) %>%
+                 .data$TE_class
+    ) %>%
     dplyr::group_by(.data$TE_class) %>%
     dplyr::reframe(
       TE_class = .data$TE_class,
@@ -250,11 +301,23 @@ create_grouped_stack_bar <- function(res,
       prop = .data$n / sum(.data$n) * 100
     )
   
-  res_summary$TE_expression <- factor(res_summary$TE_expression)
-  res_summary$expression_type <- factor(res_summary$expression_type)
-  levels(res_summary$TE_expression)[levels(res_summary$TE_expression) == "dependent"] <- "dep."
-  nTE_class <- length(unique(res$TE_class))
+  if (nrow(res_summary) == 0L) {
+    stop("No data remaining after summarization.", call. = FALSE)
+  }
   
+  # Ensure factor for consistent ordering
+  res_summary$TE_expression <- factor(
+    res_summary$TE_expression,
+    levels = c("dependent", "self")
+  )
+  res_summary$expression_type <- factor(res_summary$expression_type)
+  
+  # Shorten label for better display
+  levels(res_summary$TE_expression)[
+    levels(res_summary$TE_expression) == "dependent"
+  ] <- "dep."  
+  
+  # Create stacked bar chart
   p <- ggplot2::ggplot(
     res_summary,
     ggplot2::aes(x = .data$TE_expression, 
@@ -330,15 +393,70 @@ create_grouped_stack_bar <- function(res,
   p 
 }
 
+#' Create Donut Pie Chart for Single TE Type
+#'
+#' Creates a donut/pie chart for a specific TE type showing the breakdown
+#' of expression types. Requires the \code{webr} package.
+#' 
+#' Please, note that \code{webr} package is not maintained and this function
+#' throws several warnings of deprecated uses.
+#'
+#' @param res Data frame with classification results
+#' @param TE_feature Character string. Specific TE to plot (e.g., "LINE", "L1")
+#' @param plot.title Character string. Plot title
+#' @param output_folder Character string. Output directory
+#' @param width Numeric. Plot width in inches. Default is 7.
+#' @param height Numeric. Plot height in inches. Default is 7.
+#' @param device Character vector. Output format(s). Default is "png".
+#' @param prefix Character string. Optional prefix for filename
+#'
+#' @return Invisible NULL. Called for side effects (creating plot file).
+#'
+#' @export
+#' #' @examples
+#' \dontrun{
+#' # Requires webr package
+#' if (requireNamespace("webr", quietly = TRUE)) {
+#'   create_pie_donut(
+#'     res = classified_TEs,
+#'     TE_feature = "LINE",
+#'     output_folder = "plots",
+#'     prefix = "detailed"
+#'   )
+#' }
+#' }
 create_pie_donut <- function(res,
                              TE_feature,
                              plot.title = NULL,
                              output_folder = ".",
                              height = 7,
                              width = 7,
+                             device = "png",
                              prefix = NULL) {
   
-  # Validate input
+  # Check for webr package
+  if (!requireNamespace("webr", quietly = TRUE)) {
+    stop(
+      "Package 'webr' is required for donut plots. ",
+      "Install it with: ",
+      "devtools::install_github('cardiomoon/moonBook')",
+      "devtools::install_github('cardiomoon/webr')",
+      call. = FALSE
+    )
+  }
+
+  # Input validation
+  if (missing(res)) {
+    stop("Argument 'res' is missing with no default.", call. = FALSE)
+  }
+  
+  if (!is.data.frame(res)) {
+    stop("'res' must be a data frame.", call. = FALSE)
+  }
+  
+  if (missing(TE_feature)) {
+    stop("Argument 'TE_feature' is missing with no default.", call. = FALSE)
+  }
   
   if (!dir.exists(output_folder)) {
     tryCatch(
@@ -353,15 +471,40 @@ create_pie_donut <- function(res,
     )
   }
   
-  # Get TE_feature type
+  # Validate device
+  if (!device %in% c("png", "pdf", "jpeg", "tiff")) {
+    stop(
+      "'device' must be one of: png, pdf, jpeg, tiff",
+      call. = FALSE
+    )
+  }
+  
+  # Get TE_feature type (class, family, or name)  
   TE_type <- .determine_broad_type(res, TE_feature)
   
-  # Filter by TE_feature
-  res_summary <- res %>% 
-    dplyr::filter(.data[[TE_type]] == TE_feature)
-  names(res_summary)[names(res_summary) == "TE_expression"] <- TE_feature
+  if (is.na(TE_type)) {
+    stop(
+      "TE feature '", TE_feature, "' not found in data.",
+      call. = FALSE
+    )
+  }
   
-  res_summary$expression_type <- droplevels(res_summary$expression_type)
+  # Filter by TE_feature
+  res_filtered <- res %>% 
+    dplyr::filter(.data[[TE_type]] == TE_feature)
+  
+  if (nrow(res_filtered) == 0L) {
+    stop(
+      "No data found for TE feature '", TE_feature, "'.",
+      call. = FALSE
+    )
+  }
+  
+  # Rename column for webr
+  names(res_filtered)[names(res_filtered) == "TE_expression"] <- TE_feature
+
+  # Drop unused factor levels
+  res_filtered$expression_type <- droplevels(res_filtered$expression_type)
   
   
   # Create pie plots
@@ -372,14 +515,43 @@ create_pie_donut <- function(res,
   filename <- file.path(output_folder, 
                         paste0("donut_pie_", TE_feature, prefix, ".png"))
   
-  grDevices::png(filename, width=width, height=height, res=300, units = "in")
-  webr::PieDonut(res_summary,
-                 ggplot2::aes(pies=!!TE_feature,
-                              donuts=!!quote(expression_type)), 
-           showRatioThreshold = 0.001, 
-           labelposition=0, 
-           pieLabelSize = 8, donutLabelSize = 5,  showPieName=TRUE,
-           ratioByGroup=FALSE, titlesize = 10)
+  # Open device
+  if (device == "png") {
+    grDevices::png(filename, width = width, height = height,
+                   res = 300, units = "in")
+  } else if (device == "pdf") {
+    grDevices::pdf(filename, width = width, height = height)
+  } else if (device == "jpeg") {
+    grDevices::jpeg(filename, width = width, height = height,
+                    res = 300, units = "in", quality = 95)
+  } else if (device == "tiff") {
+    grDevices::tiff(filename, width = width, height = height,
+                    res = 300, units = "in")
+  }
+  
+  # Create donut plot
+  tryCatch(
+    {
+      webr::PieDonut(
+        res_filtered,
+        ggplot2::aes(pies = !!rlang::sym(TE_feature),
+                     donuts = !!quote(expression_type)),
+        showRatioThreshold = 0.001,
+        labelposition = 0,
+        pieLabelSize = 8,
+        donutLabelSize = 5,
+        showPieName = TRUE,
+        ratioByGroup = FALSE,
+        titlesize = 10
+      )
+    },
+    error = function(e) {
+      grDevices::dev.off()
+      stop("Failed to create donut plot: ", e$message, call. = FALSE)
+    }
+  )
   
   grDevices::dev.off()
+  
+  invisible(NULL)
 }
