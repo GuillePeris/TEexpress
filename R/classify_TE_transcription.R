@@ -253,6 +253,13 @@ classify_TE_transcription <- function(TE_results,
   res.TEs[index.ex, ]$TE_expression <- "dependent"
   res.TEs[index.ex, ]$expression_type <- "Exon"
   
+  #    + 3utr_ext:  Pervasive transcription (non-annotated 3' UTRs)
+  # Notice we are not checking 3'UTR gene strand (not computed)
+  index.3utr_ext <- is.na(res.TEs$TE_expression) &
+                    res.TEs$annotation %in% c("3utr_ext")
+  res.TEs[index.3utr_ext, ]$TE_expression <- "dependent"
+  res.TEs[index.3utr_ext, ]$expression_type <- "3UTR ext"
+  
   #    + In_g:      Intron (SS) gene expression
   index.in_g <- is.na(res.TEs$TE_expression) & 
                 res.TEs$annotation %in% c("Intron") & 
@@ -320,8 +327,6 @@ classify_TE_transcription <- function(TE_results,
 
   # Filter TEs to save. First, only expressed TEs are kept.
   res.out <- res.TEs[rownames(res.TEs) %in% expressed.TEs, , drop = FALSE]
-  # res.out <- res.TEs %>% 
-  #   dplyr::filter(row.names(.) %in% expressed.TEs)
   
   if(save == "dys") {
     res.out <- res.out %>% 
@@ -422,7 +427,10 @@ classify_TE_transcription <- function(TE_results,
 #' @noRd
 #'
 .get_expressed_features <- function(sample_groups, counts.df, minNormCounts) {
-  # Calculate minimums in one pass
+  # We select a feature as expressed if in at least one group
+  # all samples have normalized counts over minNormCounts. 
+  
+  # We compute min norm counts by group.
   min_cols <- as.data.frame(
     lapply(sample_groups, function(grp) {
       matrixStats::rowMins(as.matrix(counts.df[, grp$Sample]), na.rm = TRUE)
@@ -431,21 +439,12 @@ classify_TE_transcription <- function(TE_results,
   
   # Add to norm.counts with proper names
   colnames(min_cols) <- paste0("min_", names(sample_groups))
-  counts.df <- cbind(counts.df, min_cols)
-  
-  # Filter expressed genes and TEs
-  min_matrix <- as.matrix(counts.df[, startsWith(colnames(counts.df), "min_")])
-  expressed <- counts.df %>%
+
+  # Filter expressed genes and TEs so that the largest group expression
+  # is over minNormCounts
+  min_matrix <- as.matrix(min_cols)
+  expressed <- min_cols %>%
     dplyr::filter(matrixStats::rowMaxs(min_matrix) >= minNormCounts) 
   expressed <- rownames(expressed)
-    # dplyr::filter(apply(min_matrix, 1, max, na.rm = TRUE) >= minNormCounts) %>%
-    # rownames()
-  
-  # Calculate max of mins
-  # min_matrix <- as.matrix(min_cols)
-  # max_of_mins <- apply(min_matrix, 1, max, na.rm = TRUE)
-  # 
-  # # Filter using base R (no pipe for rowname filtering)
-  # expressed <- rownames(counts.df)[max_of_mins >= minNormCounts]
   expressed
 }

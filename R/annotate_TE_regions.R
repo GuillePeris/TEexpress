@@ -29,6 +29,10 @@
 #' @param minCounts Numeric. Minimum total normalized counts threshold for 
 #'   considering a TE loci as expressed. Used for region distribution plots. 
 #'   Default is 10.
+#' @param is_ext_3UTR Boolean. TRUE if extended 3'UTR analysis is to be
+#'        performed. Defaults to FALSE. To be implemented
+#' @param ext_3UTR_file Character string. Filename for 3'UTR analysis result,
+#'                   in gff format. To be implemented.
 #'
 #' @details
 #' The function performs the following steps:
@@ -96,7 +100,9 @@ annotate_TE_regions <- function(TE_results,
                            plot.title = NULL,
                            width = 10,
                            height = 7,
-                           minCounts = 10) {
+                           minCounts = 10,
+                           is_ext_3UTR = FALSE,
+                           ext_3UTR_file = NULL) {
   
   message("============================================") 
   message("     TE loci genomic region annotation      ")
@@ -275,8 +281,6 @@ annotate_TE_regions <- function(TE_results,
     duration <- difftime(end.time, start.time, units = "secs")
     message("       -> Finished preparing gene names (", round(duration[[1]], 2), " seconds)")
   
-  
-  
   # ============================================================
   # Step 5: Annotate TEs with Genomic Context
   # ============================================================
@@ -285,7 +289,12 @@ annotate_TE_regions <- function(TE_results,
   start.time <- Sys.time()
   
   res.TEs <- tryCatch(
-    TE_genomic_context(res.TEs, gene.TxDb, gene_names, transcript.gr),
+    TE_genomic_context(res.TEs, 
+                       gene.TxDb, 
+                       gene_names, 
+                       transcript.gr,
+                       is_ext_3UTR = is_ext_3UTR,
+                       ext_3UTR_file = ext_3UTR_file),
     error = function(e) {
       stop(
         "Failed to annotate res.TEs with genomic context: ",
@@ -296,7 +305,12 @@ annotate_TE_regions <- function(TE_results,
   )
   
   TE.count <- tryCatch(
-    TE_genomic_context(TE.count, gene.TxDb, gene_names, transcript.gr),
+    TE_genomic_context(TE.count, 
+                       gene.TxDb, 
+                       gene_names, 
+                       transcript.gr,
+                       is_ext_3UTR = is_ext_3UTR,
+                       ext_3UTR_file = ext_3UTR_file),
     error = function(e) {
       stop(
         "Failed to annotate TE.count with genomic context: ",

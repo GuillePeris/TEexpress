@@ -24,6 +24,10 @@
 #'   region. Should be positive. Default is 5000 (5kb downstream).
 #' @param downstream Integer. Maximum distance downstream of gene end to
 #'   consider for "Downstream" annotation. Default is 10000 (10kb).
+#' @param is_ext_3UTR Boolean. TRUE if extended 3'UTR analysis is to be
+#'        performed. Defaults to FALSE. To be implemented
+#' @param ext_3UTR_file Character string. Filename for 3'UTR analysis result,
+#'                   in gff format. To be implemented.
 #'
 #' @details
 #' The function performs genomic annotation in several steps:
@@ -77,7 +81,9 @@ TE_genomic_context <- function(df.TEs,
                                transcript.gr,
                                TSSminus = -5000,
                                TSSplus = 5000,
-                               downstream = 10000) {
+                               downstream = 10000, 
+                               is_ext_3UTR = FALSE,
+                               ext_3UTR_file = NULL) {
 
   # Argument validation
   if (missing(df.TEs)) {
@@ -194,6 +200,30 @@ TE_genomic_context <- function(df.TEs,
            anno@anno$geneChr)
   )
   
+  # Simplify annotation labels
+  anno_mcols <- GenomicRanges::mcols(anno@anno)
+  anno_mcols <- .simplify_annotations(anno_mcols)
+  
+  # ============================================================
+  # Add 3'UTR extended annotation (if provided)
+  # ============================================================
+  # Extended 3'UTR analysis
+  if(is_ext_3UTR) {
+    nontranscript_regions <- c("Intergenic", "Promoter", "Downstream")
+    ext_3UTR <- rtracklayer::import(ext_3UTR_file, format="gtf")
+      
+    # Add 3utr_ext info
+    anno_mcols$transcript_id <- stringr::str_extract(rownames(anno_mcols), "^[^:]*")
+    anno_mcols <- dplyr::left_join(as.data.frame(anno_mcols),
+                                         as.data.frame(GenomicRanges::mcols(ext_3UTR)[, c("Is_in_ext_3UTR", "transcript_id")]),
+                                         by = "transcript_id")
+    anno_mcols$Is_in_ext_3UTR[is.na(anno_mcols$Is_in_ext_3UTR)] <- "No"
+    anno_mcols$transcript_id <- NULL
+    
+    anno_mcols[anno_mcols$annotation %in% nontranscript_regions &
+         anno_mcols$Is_in_ext_3UTR != "No", ]$annotation <- "3utr_ext"
+  }
+  
   # ============================================================
   # Combine Original Data with Annotations
   # ============================================================
@@ -202,13 +232,9 @@ TE_genomic_context <- function(df.TEs,
   original_rownames <- rownames(df.TEs)
   
   # Add annotation columns
-  anno_mcols <- GenomicRanges::mcols(anno@anno)
   df.TEs <- cbind(df.TEs, anno_mcols)
   rownames(df.TEs) <- original_rownames
   df.TEs$distanceToTSS <- NULL
-  
-  # Simplify annotation labels
-  df.TEs <- .simplify_annotations(df.TEs)
 
   
   # ============================================================
