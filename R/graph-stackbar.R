@@ -121,6 +121,8 @@ stackBarPlot <- function(aCR,
       # Legend
       legend.text = ggplot2::element_text(size = 12),
       legend.title = ggplot2::element_blank(),
+      
+      # Title
       plot.title = ggplot2::element_text(hjust = 0.5, size = 24, color = "red")
     ) +
     ggplot2::labs(
@@ -141,7 +143,7 @@ stackBarPlot <- function(aCR,
       ggplot2::aes(label = sprintf("%0.1f%%", .data[[y]])),
       stat = "identity",
       min.size = 8,
-      size = 16,
+      size = 10,
       position = ggplot2::position_fill(vjust = 0.5),
       contrast = TRUE,
       show.legend = FALSE
