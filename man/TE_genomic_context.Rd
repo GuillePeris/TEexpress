@@ -11,7 +11,9 @@ TE_genomic_context(
   transcript.gr,
   TSSminus = -5000,
   TSSplus = 5000,
-  downstream = 10000
+  downstream = 10000,
+  is_ext_3UTR = FALSE,
+  ext_3UTR_file = NULL
 )
 }
 \arguments{
@@ -40,6 +42,12 @@ region. Should be positive. Default is 5000 (5kb downstream).}
 
 \item{downstream}{Integer. Maximum distance downstream of gene end to
 consider for "Downstream" annotation. Default is 10000 (10kb).}
+
+\item{is_ext_3UTR}{Boolean. TRUE if extended 3'UTR analysis is to be
+performed. Defaults to FALSE. To be implemented}
+
+\item{ext_3UTR_file}{Character string. Filename for 3'UTR analysis result,
+in gff format. To be implemented.}
 }
 \value{
 Data frame combining original TE information with genomic annotation

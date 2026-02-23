@@ -7,12 +7,15 @@
 annotate_TE_regions(
   TE_results,
   gtf.genes.file,
+  gtf.format = "gtf",
   output_folder = ".",
   device = "png",
   plot.title = NULL,
   width = 10,
   height = 7,
-  minCounts = 10
+  minCounts = 10,
+  is_ext_3UTR = FALSE,
+  ext_3UTR_file = NULL
 )
 }
 \arguments{
@@ -28,6 +31,9 @@ annotate_TE_regions(
 gene annotations. Should include protein-coding genes with transcript
 information. Must have columns: \code{type}, \code{transcript_biotype},
 \code{gene_biotype}, \code{gene_id}, \code{gene_name}.}
+
+\item{gtf.format}{Character string. Format of gene GTF file: "gtf" (default),
+"gff3· or "gff".}
 
 \item{output_folder}{Character string. Path for output directory. A
 subdirectory "TEs_annotated" will be created inside this folder. Default
@@ -47,6 +53,12 @@ If NULL (default), a generic title will be used.}
 \item{minCounts}{Numeric. Minimum total normalized counts threshold for
 considering a TE loci as expressed. Used for region distribution plots.
 Default is 10.}
+
+\item{is_ext_3UTR}{Boolean. TRUE if extended 3'UTR analysis is to be
+performed. Defaults to FALSE. To be implemented}
+
+\item{ext_3UTR_file}{Character string. Filename for 3'UTR analysis result,
+in gff format. To be implemented.}
 }
 \value{
 A list with three updated elements for downstream analysis:

@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph_classify_TE.R
 \name{TE_classify_pie}
 \alias{TE_classify_pie}
-\title{Create Pie Charts for TE Expression Classification}
+\title{Create Classification Plots for TE Expression}
 \usage{
 TE_classify_pie(
   res,
@@ -19,7 +19,9 @@ TE_classify_pie(
 )
 }
 \arguments{
-\item{res}{Data frame containing TE classification results.}
+\item{res}{Data frame containing TE classification results. Must include
+columns: \code{TE_expression} (classification: "dependent" or "self"),
+and \code{expression_type} (detailed classification for stacked bar plots).}
 
 \item{plot.title}{Character string. Title for the plot. If NULL (default),
 no title is displayed.}
@@ -54,25 +56,36 @@ legend. Default is c("dependent" = "Gene-dependent TEs",
 \item "dys": Only significantly dysregulated TEs (up or down)
 \item "up": Only significantly upregulated TEs
 \item "down": Only significantly downregulated TEs
-}}
+}
+
+The function creates three types of plots:
+
+\strong{1. Pie Charts:}
+One pie chart per TE class showing the overall proportion of:
+\itemize{
+\item \strong{Self-expressed TEs}: Transcribed from their own promoter
+\item \strong{Gene-dependent TEs}: Transcribed as part of gene runthrough
+}
+
+\strong{2. Stacked Bar Charts:}
+Grouped bars showing detailed classification breakdown:
+\itemize{
+\item Exon, Intron (expressed), Intron (not expressed), etc.
+\item Grouped by self-expressed vs. gene-dependent
+\item One panel per TE class
+}
+
+\strong{3. Bar plot:}
+One bar per TE class showing the overall proportion and absolute number of
+TE elements en each class.}
 }
 \value{
 Invisible NULL. Called for side effects (creating plot files).
 }
 \description{
-Generates different types of charts showing the proportion of self-expressed
+Generates multiple types of plots showing the proportion of self-expressed
 vs. gene-dependent transposable elements across different TE classes (LINE,
 SINE, LTR, DNA, etc.).
-}
-\details{
-The function creates a pie chart for each TE class showing:
-\itemize{
-\item \strong{Self-expressed TEs}: TEs transcribed from their own promoter
-\item \strong{Gene-dependent TEs}: TEs transcribed as part of gene runthrough
-}
-
-Each pie slice is labeled with its percentage. TE classes are displayed
-as separate facets, arranged horizontally (up to \code{max_cols} columns).
 }
 \examples{
 \dontrun{
