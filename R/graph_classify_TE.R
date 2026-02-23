@@ -33,7 +33,7 @@
 #'     \item "down": Only significantly downregulated TEs
 #'   }
 #'
-#' The function creates two types of plots:
+#' The function creates three types of plots:
 #'
 #' \strong{1. Pie Charts:}
 #' One pie chart per TE class showing the overall proportion of:
@@ -50,6 +50,9 @@
 #'   \item One panel per TE class
 #' }
 #'
+#' \strong{3. Bar plot:}
+#' One bar per TE class showing the overall proportion and absolute number of
+#' TE elements en each class.
 #'
 #' @return Invisible NULL. Called for side effects (creating plot files).
 #'
@@ -58,7 +61,7 @@
 #' @examples
 #' \dontrun{
 #' # Assuming 'classified_TEs' has TE_expression and TE_class columns
-#' TE_classify_pie(
+#' graph_classify_TE(
 #'   res = TE_results$res.TEs,
 #'   plot.title = "TE Expression Classification",
 #'   device = c("pdf", "png"),
@@ -67,7 +70,7 @@
 #' }
 #'
 #'   
-TE_classify_pie <- function(res,
+graph_classify_TE <- function(res,
                             plot.title = NULL,
                             device = "png",
                             width.pie = 14,
@@ -137,47 +140,77 @@ TE_classify_pie <- function(res,
   # Create and Save Pie Charts
   # ============================================================  
   
-  filename <- file.path(output_folder, paste0("pie_TE_classes_", save))
-  
-  p <- tryCatch(
-    .create_pie_plot(res = res, 
-                    plot.title = plot.title,
-                    colors = colors,
-                    labels = labels
-    ),
-    error = function(e) {
-      stop(
-        "Failed to create pie TE classify plot: ", e$message,
-        call. = FALSE
-      )
-    }
-  )
-  
-  # Save plot 
-  tryCatch(
-    printDevice(p, filename, device,
-                width = width.pie, height = height.pie),
-    error = function(e) {
-      warning(
-        "Failed to save pie TE classify plot: ", e$message,
-        call. = FALSE
-      )
-    }
-  )
+  # filename <- file.path(output_folder, paste0("pie_TE_classes_", save))
+  # 
+  # p <- tryCatch(
+  #   .create_pie_plot(res = res, 
+  #                   plot.title = plot.title,
+  #                   colors = colors,
+  #                   labels = labels
+  #   ),
+  #   error = function(e) {
+  #     stop(
+  #       "Failed to create pie TE classify plot: ", e$message,
+  #       call. = FALSE
+  #     )
+  #   }
+  # )
+  # 
+  # # Save plot 
+  # tryCatch(
+  #   printDevice(p, filename, device,
+  #               width = width.pie, height = height.pie),
+  #   error = function(e) {
+  #     warning(
+  #       "Failed to save pie TE classify plot: ", e$message,
+  #       call. = FALSE
+  #     )
+  #   }
+  # )
   
   # ============================================================
   # Create and Save Stacked Bar Charts
   # ============================================================
   
-  filename <- file.path(output_folder, paste0("stack_bar_TE_classes_", save))
+  # filename <- file.path(output_folder, paste0("stack_bar_TE_classes_", save))
+  # 
+  # p <- tryCatch(
+  #   .create_grouped_stack_bar(res = res, 
+  #                             plot.title = plot.title
+  #                            ),
+  #   error = function(e) {
+  #     stop(
+  #       "Failed to create stack bar TE classify plot: ", e$message,
+  #       call. = FALSE
+  #     )
+  #   }
+  # )
+  # 
+  # # Save plot 
+  # tryCatch(
+  #   printDevice(p, filename, device,
+  #               width = width.bar, height = height.bar),
+  #   error = function(e) {
+  #     warning(
+  #       "Failed to save pie TE classify plot: ", e$message,
+  #       call. = FALSE
+  #     )
+  #   }
+  # )
+  
+  # ============================================================
+  # Create and Save Bar Plots
+  # ============================================================
+  
+  filename <- file.path(output_folder, paste0("barplot_TE_classes_", save))
   
   p <- tryCatch(
-    .create_grouped_stack_bar(res = res, 
-                              plot.title = plot.title
-                             ),
+    .create_selfTEs_barplot(res = res, 
+                    plot.title = plot.title
+    ),
     error = function(e) {
       stop(
-        "Failed to create stack bar TE classify plot: ", e$message,
+        "Failed to create barplot with TE classes: ", e$message,
         call. = FALSE
       )
     }
@@ -189,7 +222,65 @@ TE_classify_pie <- function(res,
                 width = width.bar, height = height.bar),
     error = function(e) {
       warning(
-        "Failed to save pie TE classify plot: ", e$message,
+        "Failed to save barplot with TE classes: ", e$message,
+        call. = FALSE
+      )
+    }
+  )
+  
+  # ============================================================
+  # Create and Save Bar Plots for most self expressed TEs
+  # ============================================================
+  
+  filename <- file.path(output_folder, paste0("barplot_selfExpressed_TE_names_", save))
+  
+  p <- tryCatch(
+    .create_self_TE_type_barplot(res = res, 
+                                 type = "TE_name",
+                                 plot.title = plot.title
+    ),
+    error = function(e) {
+      stop(
+        "Failed to create barplot with most self expressed TE names: ", e$message,
+        call. = FALSE
+      )
+    }
+  )
+  
+  # Save plot 
+  tryCatch(
+    printDevice(p, filename, device,
+                width = width.bar, height = height.bar),
+    error = function(e) {
+      warning(
+        "Failed to save barplot with most self expressed TE names: ", e$message,
+        call. = FALSE
+      )
+    }
+  )
+  
+  filename <- file.path(output_folder, paste0("barplot_selfExpressed_TE_families_", save))
+  
+  p <- tryCatch(
+    .create_self_TE_type_barplot(res = res, 
+                                 type = "TE_family",
+                                 plot.title = plot.title
+    ),
+    error = function(e) {
+      stop(
+        "Failed to create barplot with most self expressed TE names: ", e$message,
+        call. = FALSE
+      )
+    }
+  )
+  
+  # Save plot 
+  tryCatch(
+    printDevice(p, filename, device,
+                width = width.bar, height = height.bar),
+    error = function(e) {
+      warning(
+        "Failed to save barplot with most self expressed TE families: ", e$message,
         call. = FALSE
       )
     }
@@ -337,7 +428,7 @@ TE_classify_pie <- function(res,
   p <- p +
     ggfittext::geom_fit_text(
       ggplot2::aes(label = sprintf("%0.1f%%", .data$prop)),
-      min.size = 8,
+      # min.size = 6,
       size = 16,
       position = ggplot2::position_stack(vjust = 0.5),
       contrast = TRUE,
@@ -371,7 +462,9 @@ TE_classify_pie <- function(res,
       # Legend
       legend.text = ggplot2::element_text(size = 12),
       legend.title = ggplot2::element_blank(),
-      plot.title = ggplot2::element_text(hjust = 0.5, size = 24, color = "red")
+      
+      # Title
+      plot.title = ggplot2::element_text(hjust = 0.5, size = 18, color = "red")
     ) +
     ggplot2::labs(
       y = "% TE loci"
@@ -384,6 +477,227 @@ TE_classify_pie <- function(res,
       expand = c(0, 1)
     )
   
+  
+  # Add title if provided
+  if (!is.null(plot.title)) {
+    p <- p + ggplot2::ggtitle(plot.title)
+  }
+  
+  p 
+}
+
+#' Create Bar Plot with number of TE class elements
+#'
+#' Internal function to generate bar plots showing detailed
+#' TE classes (LTR, LINE, SINE, DNA, Other) both by proportion and 
+#' absolut number.
+#'
+#' @param res Data frame with TE_expression, expression_type, and TE_class columns
+#' @param plot.title Character string for plot title
+#'
+#' @return A ggplot object
+#' @keywords internal
+#' @noRd
+.create_selfTEs_barplot <- function(res,
+                            plot.title = NULL) {
+  
+  # Calculate proportions of self expressed elements by TE class
+  res_summary <- res %>%
+    dplyr::filter(.data$TE_expression == "self") %>% 
+    dplyr::count(.data$TE_class)  %>%  
+    dplyr::mutate(
+      prop = .data$n / sum(.data$n) * 100
+    )
+  
+  if (nrow(res_summary) == 0L) {
+    stop("No data remaining after summarization.", call. = FALSE)
+  }
+  
+  # Ensure factor for consistent ordering
+  res_summary$TE_class <- factor(
+    res_summary$TE_class,
+    levels = c("LTR", "LINE", "SINE", "DNA")
+  )
+
+  plot.title <- paste0(plot.title, " - self expressed")
+  
+  # Create bar plot
+  p <- ggplot2::ggplot(
+    res_summary,
+    ggplot2::aes(x = .data$TE_class, 
+                 y = .data$prop, 
+                 fill = .data$TE_class,
+                 ymin = 0,
+                 ymax = max(.data$prop + 5, 100)
+    )
+  ) + 
+    ggplot2::geom_bar(width = 0.8, stat = "identity", color = "white") 
+
+  
+  
+  # Add percentage labels
+  p <- p +
+    ggfittext::geom_fit_text(
+      ggplot2::aes(label = sprintf("%0.1f %%\n(%i)", .data$prop, .data$n)),
+      # min.size = 6,
+      size = 16,
+      position = ggplot2::position_stack(vjust = 0.5),
+      contrast = TRUE,
+      show.legend = FALSE
+    )
+  
+  # Apply theme
+  p <- p +
+    ggplot2::theme(
+      # Grid
+      panel.grid.major = ggplot2::element_line(color = "grey90", linewidth = 0.5),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major.x = ggplot2::element_blank(),
+      
+      # Background
+      panel.background = ggplot2::element_rect(fill = "white", color = NA),
+      plot.background = ggplot2::element_rect(fill = "white", color = NA),
+      
+      # Axis
+      axis.text = ggplot2::element_text(colour = "grey30", size = 12),
+      axis.title.x = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_text(
+        size = 20,
+        colour = "grey30",
+        hjust = 0.5,
+        margin = ggplot2::margin(r = 10)
+      ),
+      axis.ticks.y = ggplot2::element_line(color = "grey30", linewidth = 0.5),
+      axis.ticks.length.y = ggplot2::unit(0.25, "cm"),
+      
+      # Legend
+      legend.position="none",
+      
+      # Title
+      plot.title = ggplot2::element_text(hjust = 0.5, size = 18, color = "red")
+    ) +
+    ggplot2::labs(
+      y = "% TE loci"
+    )
+  
+  # Format y-axis as percentages
+  p <- p +
+    ggplot2::scale_y_continuous(
+      labels = function(x) paste0(x, " %"),
+      expand = c(0, 0)
+    )
+  
+  
+  # Add title if provided
+  if (!is.null(plot.title)) {
+    p <- p + ggplot2::ggtitle(plot.title)
+  }
+  
+  p 
+}
+
+#' Create Bar Plot with most frequent TE_family or TE_name
+#'
+#' Function to generate bar plots showing detailed
+#' most numerous elements in results counting by family or TE name 
+#'
+#' @param res Data frame with TE_expression, expression_type, and TE_class columns
+#' @param type Valid values are "TE_family" or "TE_name". Required,
+#' @param plot.title Character string for plot title
+#' @param nmax Maximum value of most expressed TE type to plot
+#'
+#' @return A ggplot object
+#' @keywords internal
+#' @noRd
+.create_self_TE_type_barplot <- function(res,
+                                    type, 
+                                    plot.title = NULL,
+                                    nmax = 10
+                                    ) {
+  
+  # Check type is valid
+  if( ! (type %in% c("TE_name", "TE_family"))) {
+    stop(type, " is not a valid TE type")
+  }
+  
+  # Calculate proportions of self expressed elements by TE class
+  res_summary <- res %>%
+    dplyr::filter(.data$TE_expression == "self") %>% 
+    dplyr::count(.data[[type]]) %>% 
+    dplyr::arrange(dplyr::desc(.data$n)) 
+  nrows <- nrow(res_summary)
+  res_summary <- res_summary %>% 
+    dplyr::slice_head(n = min(nmax, nrows)) %>%    
+    dplyr::rename(TE_type = rlang::sym(type))
+  res_summary$TE_type <- factor(res_summary$TE_type, levels = res_summary$TE_type)
+  
+  if (nrow(res_summary) == 0L) {
+    stop("No data remaining after summarization.", call. = FALSE)
+  }
+  
+  plot.title <- paste0(plot.title, "\nself expressed by ", type)
+  
+  # Create bar plot
+  p <- ggplot2::ggplot(
+    res_summary,
+    ggplot2::aes(x = .data$TE_type, 
+                 y = .data$n, 
+                 fill = .data$TE_type
+    )
+  ) + 
+    ggplot2::geom_bar(width = 0.6, stat = "identity", color = "white") 
+  
+  
+  
+  # Apply theme
+  p <- p +
+    ggplot2::theme(
+      # Grid
+      panel.grid.major = ggplot2::element_line(color = "grey90", linewidth = 0.5),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major.x = ggplot2::element_blank(),
+      
+      # Background
+      panel.background = ggplot2::element_rect(fill = "white", color = NA),
+      plot.background = ggplot2::element_rect(fill = "white", color = NA),
+      
+      # Axis
+      axis.text.x = ggplot2::element_text(colour = "grey30", 
+                                        size = 12, 
+                                        angle = 45, 
+                                        hjust = 1),
+      axis.text.y = ggplot2::element_text(colour = "grey30", 
+                                          size = 12),
+      axis.title.x = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_text(
+        size = 20,
+        colour = "grey30",
+        hjust = 0.5,
+        margin = ggplot2::margin(r = 10)
+      ),
+      axis.ticks.x = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_line(color = "grey30", linewidth = 0.5),
+      axis.ticks.length.y = ggplot2::unit(0.25, "cm"),
+      
+      # Legend
+      legend.position="none",
+      
+      # Title
+      plot.title = ggplot2::element_text(hjust = 0.5, size = 18, color = "red")
+    ) +
+    ggplot2::labs(
+      y = "# of self expressed TEs"
+    )
+  
+  # Change distance between axis and labels
+  p <- p +
+    ggplot2::scale_y_continuous(
+      expand = c(0, 0),
+      breaks = .integer_breaks() # scales::breaks_pretty()
+    ) +
+    ggplot2::scale_x_discrete(
+      expand = c(0, 0)
+    )
   
   # Add title if provided
   if (!is.null(plot.title)) {
@@ -413,7 +727,7 @@ TE_classify_pie <- function(res,
 #' @return Invisible NULL. Called for side effects (creating plot file).
 #'
 #' @export
-#' #' @examples
+#' @examples
 #' \dontrun{
 #' # Requires webr package
 #' if (requireNamespace("webr", quietly = TRUE)) {
@@ -554,4 +868,21 @@ create_pie_donut <- function(res,
   grDevices::dev.off()
   
   invisible(NULL)
+}
+
+
+#' Get integer breaks when plotting number of TEs
+#'
+#' @return integer breaks
+#' @keywords internal
+#' @noRd
+# Function from 
+# A function factory for getting integer y-axis values.
+.integer_breaks <- function(n = 5, ...) {
+  fxn <- function(x) {
+    breaks <- floor(pretty(x, n, ...))
+    names(breaks) <- attr(breaks, "labels")
+    breaks
+  }
+  return(fxn)
 }
