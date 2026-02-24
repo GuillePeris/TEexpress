@@ -38,7 +38,7 @@ from Ensembl GRCh38.115
 from RepeatMasker (hg38)
 \item Count Data (\strong{~2 MB compressed}): Example TEtranscripts count
 files in a ZIP archive. Contains 6 sample count files (3 control, 3 treatment)
-and a csv file for TEexpress analysis
+and a csv file for TExpress analysis
 }
 
 Files are downloaded from Dropbox using direct download links. The count data

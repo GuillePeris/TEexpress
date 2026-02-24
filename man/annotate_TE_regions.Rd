@@ -11,6 +11,8 @@ annotate_TE_regions(
   output_folder = ".",
   device = "png",
   plot.title = NULL,
+  maxpadj = 0.05,
+  minlfc = 1,
   width = 10,
   height = 7,
   minCounts = 10,
@@ -45,6 +47,12 @@ Default is "png".}
 
 \item{plot.title}{Character string. Title for the region distribution plots.
 If NULL (default), a generic title will be used.}
+
+\item{maxpadj}{Numeric. Adjusted p-value threshold for significance.
+Features with padj < maxpadj are considered significant. Default is 0.05.}
+
+\item{minlfc}{Numeric. Minimum absolute log2 fold change threshold for
+differential expression. Default is 1.}
 
 \item{width}{Numeric. Plot width in inches. Default is 10.}
 
