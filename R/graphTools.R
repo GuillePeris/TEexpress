@@ -13,8 +13,7 @@
 #' @param height Numeric. Plot height in inches. Default is 7.
 #' 
 #'
-#' @keywords internal
-#' @noRd
+#' @export
 #'
 
 
