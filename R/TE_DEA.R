@@ -375,12 +375,12 @@ TE_DEA <- function(metafile,
   output.gene.res.file <- file.path(output.genes, "DESeq2_gene_results.tsv")
   .save_deseq2(res.genes, output.gene.res.file, "gene results")
   
-  res.genes.up <- res.genes %>% dplyr::filter(.data$log2FoldChange > minlfc, 
+  res.genes.up <- res.genes %>% dplyr::filter(.data$log2FoldChange > minlfc,
                                        .data$padj < maxpadj)
   output.gene.up.file <- file.path(output.genes, "DESeq2_gene_up_results.tsv")
   .save_deseq2(res.genes.up, output.gene.up.file, "gene up results")
-  
-  res.genes.down <- res.genes %>% dplyr::filter(log2FoldChange < -minlfc, padj < maxpadj)
+
+  res.genes.down <- res.genes %>% dplyr::filter(.data$log2FoldChange < -minlfc, .data$padj < maxpadj)
   output.gene.down.file <- file.path(output.genes, "DESeq2_gene_down_results.tsv")
   .save_deseq2(res.genes.down, output.gene.down.file, "gene down results")
   
@@ -388,11 +388,11 @@ TE_DEA <- function(metafile,
   output.TE.res.file <- file.path(output.TEs, "DESeq2_TE_results.tsv")
   .save_deseq2(res.TEs, output.TE.res.file, "TE results")
 
-  res.TEs.up <- res.TEs %>% dplyr::filter(log2FoldChange > minlfc, padj < maxpadj)
+  res.TEs.up <- res.TEs %>% dplyr::filter(.data$log2FoldChange > minlfc, .data$padj < maxpadj)
   output.TE.up.file <- file.path(output.TEs, "DESeq2_TE_up_results.tsv")
   .save_deseq2(res.TEs.up, output.TE.up.file, "TE up results")
-  
-  res.TEs.down <- res.TEs %>% dplyr::filter(log2FoldChange < -minlfc, padj < maxpadj)
+  # 
+  res.TEs.down <- res.TEs %>% dplyr::filter(.data$log2FoldChange < -minlfc, .data$padj < maxpadj)
   output.TE.down.file <- file.path(output.TEs, "DESeq2_TE_down_results.tsv")
   .save_deseq2(res.TEs.down, output.TE.down.file, "TE down results")
   
@@ -477,7 +477,7 @@ TE_DEA <- function(metafile,
   }
   
   if (missing(file)) {
-    stop("Argument 'df' is missing with no default.", call. = FALSE)
+    stop("Argument 'file' is missing with no default.", call. = FALSE)
   }
   
   tryCatch(
