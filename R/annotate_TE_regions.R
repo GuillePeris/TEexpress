@@ -26,6 +26,10 @@
 #'   Default is "png".
 #' @param plot.title Character string. Title for the region distribution plots.
 #'   If NULL (default), a generic title will be used.
+#' @param maxpadj Numeric. Adjusted p-value threshold for significance.
+#'   Features with padj < maxpadj are considered significant. Default is 0.05.
+#' @param minlfc Numeric. Minimum absolute log2 fold change threshold for
+#'   differential expression. Default is 1.
 #' @param width Numeric. Plot width in inches. Default is 10.
 #' @param height Numeric. Plot height in inches. Default is 7.
 #' @param minCounts Numeric. Minimum total normalized counts threshold for 
@@ -101,6 +105,8 @@ annotate_TE_regions <- function(TE_results,
                            output_folder = ".",
                            device = "png",
                            plot.title = NULL,
+                           maxpadj = 0.05,
+                           minlfc = 1,
                            width = 10,
                            height = 7,
                            minCounts = 10,
@@ -352,11 +358,11 @@ annotate_TE_regions <- function(TE_results,
   output.TE.res <- file.path(output_annotated, "DESeq2_TE_results_annotated.tsv")
   .save_deseq2(res.TEs, output.TE.res, "TE annotated results")
   
-  res.TEs.down <- res.TEs %>% dplyr::filter(log2FoldChange < -minlfc, padj < maxpadj)
+  res.TEs.down <- res.TEs %>% dplyr::filter(.data$log2FoldChange < -minlfc, .data$padj < maxpadj)
   output.TE.res.down <- file.path(output_annotated, "DESeq2_TE_results_down_annotated.tsv")
   .save_deseq2(res.TEs.down, output.TE.res.down, "TE down annotated results")
 
-  res.TEs.up <- res.TEs %>% dplyr::filter(log2FoldChange > minlfc, padj < maxpadj)
+  res.TEs.up <- res.TEs %>% dplyr::filter(.data$log2FoldChange > minlfc, .data$padj < maxpadj)
   output.TE.res.up <- file.path(output_annotated, "DESeq2_TE_results_up_annotated.tsv")
   .save_deseq2(res.TEs.up, output.TE.res.up, "TE up annotated results")
   
