@@ -49,16 +49,15 @@ TE_results_DEA <- TE_DEA(
 )
 
 # Annotate TEs with genomic context
-TE_results_annot <- TE_regionAnnot(
+TE_results_annot <- annotate_TE_regions(
   TE_results = TE_results_DEA,
   gtf.genes.file = my.data$gtf.gene.file,
   output_folder = "results"
 )
 
 # Classify TEs as self-expressed or gene-dependent
-TE_results_classify <- classify_TE_transcription(TE_results, 
-  output_folder = output, 
-  plot.title = plot.title,
+TE_results_classify <- classify_TE_transcription(TE_results_annot, 
+  output_folder = "results", 
   save = "all")
 ```
 
