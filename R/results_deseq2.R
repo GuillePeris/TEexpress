@@ -40,7 +40,7 @@
 #' head(res)
 #' }
 #'
-results_deseq2 <- function(dds, shrinklog2FC) {
+results_deseq2 <- function(dds, shrinklog2FC=FALSE) {
   # Setting ghost variables to NULL to pass check() 
   colData <- NULL
   
