@@ -155,8 +155,8 @@ TE_DEA <- function(metafile,
     stop("TE GTF file '", gtf.TE.file, "' not found.", call. = FALSE)
   }
   
-  for (argument in c(useCtrlGenes, shrinklog2FC, saveNorm)) {
-    if (!is.logical(argument)) {
+  for (argument in c("useCtrlGenes", "shrinklog2FC", "saveNorm")) {
+    if (!is.logical(get(argument))) {
       stop("'", argument, "' must be TRUE or FALSE.", call. = FALSE)
     }
   }
@@ -281,7 +281,7 @@ TE_DEA <- function(metafile,
   
   end.time <- Sys.time()
   duration <- difftime(end.time, start.time, units="secs")
-  message("       -> Finished DESeq2 analysys (", 
+  message("       -> Finished DESeq2 analysis (", 
           round(duration[[1]], 2), " seconds).") 
   
   # ============================================================
