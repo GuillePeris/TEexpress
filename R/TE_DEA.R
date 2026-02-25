@@ -68,7 +68,7 @@
 #' TE results include additional columns for genomic coordinates (seqnames,
 #' start, end, strand, width) and TE class/family information.
 #'
-#' @return A list with three elements:
+#' @return A list with four elements:
 #' \describe{
 #'   \item{res.TEs}{Data frame of DESeq2 results for TEs, including genomic
 #'     coordinates and TE annotations}
